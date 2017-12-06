@@ -3,56 +3,65 @@ package ru.itis;
 import java.time.LocalTime;
 
 public class ParkPlace {
-
-
-    private Car cars[];
+    private String carPlace;
     private int count = 0;
+    private int limit = 2;
+    private Car[] cars = new Car[limit];
 
-    public void parking(Car car) {
-        cars[count] = car;
-        count++;
-    }
-
-
-    int []car = new int[3];
-    int []place = new int[3];
-
-    LocalTime beginTime = LocalTime.parse("08:00:00");
+    LocalTime beginTime = LocalTime.parse("09:00:00");
     LocalTime finishTime = LocalTime.parse("21:00:00");
 
-    public ParkPlace() {
-        car[0] = 132;
-        car[1] = 256;
-        car[2] = 333;
-        place[0] = 0;
-        place[1] = 0;
-        place[2] = 0;
+    public ParkPlace(String carPlace) {
+        setCarPlace(carPlace);
     }
 
-    public void park(int n) {
+    public void park(Car car) {
         if (LocalTime.now().isAfter(beginTime) && LocalTime.now().isBefore(finishTime)) {
-            if (place[n - 1] == 0) {
-                System.out.println("Паркуемся");
-                place[n - 1] = 1;
+            if (car.getParkNumber() == -1) {
+                if (count < limit) {
+                    for (int i = 0; i < cars.length; i++) {
+                        if (cars[i] == null) {
+                            cars[i] = car;
+                            car.setParkNumber(i);
+                            count++;
+                            break;
+                        }
+                    }
+                    System.out.println(car.getModel() + " припаркована");
+                } else {
+                    System.err.println("На парковке нет мест");
+                }
             } else {
-                System.out.println("Вы уже припаркованы");
+                System.out.println(car.getModel() + " уже припаркована");
             }
         } else {
-            System.out.println("Парковка не работает");
+            System.err.println("Парковка не работает");
         }
     }
-    public void parkOff(int n) {
+
+    public void parkOff(Car car) {
         if (LocalTime.now().isAfter(beginTime) && LocalTime.now().isBefore(finishTime)) {
-            if (place[n-1] == 1) {
-                System.out.println("Выезжаем");
-                place[n - 1] = 0;
+            if (cars[car.getParkNumber()] == car) {
+                cars[car.getParkNumber()] = null;
+                car.setParkNumber(-1);
+                System.out.println(car.getModel() + " выехала");
+                count--;
             } else {
-                System.out.println("Вы еще не припаркованы");
+                System.out.println(car.getModel() + " не припаркована на этой парковке");
             }
         } else {
-            System.out.println("Парковка не работает");
+            System.err.println("Парковка не работает");
         }
     }
+
+    public String getCarPlace() {
+        return carPlace;
+    }
+    public void setCarPlace(String carPlace) {
+        this.carPlace = carPlace;
+    }
+
+
 
 
 
